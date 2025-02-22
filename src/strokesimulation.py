@@ -1,8 +1,73 @@
 import random
-import math
+import math, numpy as np
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List, Optional, Dict, Tuple
+from enum import Enum
+import pandas as pd
+import uuid
+from datetime import datetime
+import logging
+from pathlib import Path
 
+def setup_logging(simulation_id: str):
+    log_dir = Path("logs")
+    log_dir.mkdir(exist_ok=True)
+    
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler(f'logs/simulation_{simulation_id}.log'),
+            logging.StreamHandler()
+        ]
+    )
+    return logging.getLogger(__name__)
+
+# class SimulationType(Enum):
+#     POPULATION = "population"
+#     RISK_PREDICTION = "risk_prediction"
+@dataclass
+class RiskModel:
+    """Simulated ML model for stroke risk prediction"""
+    def predict_risk(self,
+                         is_positive: bool,
+                         neg_alpha: float = 0.1,
+                         neg_beta: float = 1.1,
+                         pos_alpha: float = 1.967,
+                         pos_beta: float = 0.7) -> float: 
+        """ Generate a prediction score using a Beta distribution based on the event type. Parameters
+        ----------
+        neg_alpha : float
+            Alpha () for right-skewed Beta (negative events).
+        neg_beta : float
+            Beta (β) for right-skewed Beta (negative events).
+        pos_alpha : float
+            Alpha () for left-skewed Beta (positive events).
+        pos_beta : float
+            Beta (β) for left-skewed Beta (positive events).
+        is_positive : bool
+            False or True to determine which distribution to sample from.
+
+        Returns
+        -------
+        float
+            A random score between 0 and 1.
+
+        Raises
+        ------
+        ValueError
+            If parameters do not meet the skew constraints or is_positive is invalid.
+        """
+        if is_positive == False:
+            if neg_alpha >= 1 or neg_beta <= 1:
+                raise ValueError(f"For right-skewed Beta (negative events), expect neg_alpha < 1 and neg_beta > 1; got neg_alpha={neg_alpha}, neg_beta={neg_beta}.")
+            return np.random.beta(neg_alpha, neg_beta)
+        elif is_positive == True:
+            if pos_alpha <= 1 or pos_beta >= 1:
+                raise ValueError(f"For left-skewed Beta (positive events), expect pos_alpha > 1 and pos_beta < 1; got pos_alpha={pos_alpha}, pos_beta={pos_beta}.")
+            return np.random.beta(pos_alpha, pos_beta)
+        else:
+            raise ValueError('is_positive must be either false or True.')
 @dataclass
 class Person:
     """Class to hold information about each individual in the simulation."""
@@ -14,7 +79,7 @@ class Person:
     # Optional: you can include extra attributes for age, risk factors, etc.
     age: Optional[int] = None
     risk_factors: dict = field(default_factory=dict)
-
+    monthly_risk_scores: List[Optional[float]] = field(default_factory=list)
 class StrokeSimulation:
     """
     A Python-based simulation of stroke incidence in a population, 
@@ -29,7 +94,8 @@ class StrokeSimulation:
                  include_mortality: bool = False,
                  annual_mortality_rate: float = 0.01,
                  age_distribution: bool = False,
-                 initial_age_range: tuple = (20, 80)):
+                 initial_age_range: tuple = (20, 80),
+                 risk_model: Optional[RiskModel] = None):
         """
         Initialize the simulation with key parameters.
         
@@ -44,7 +110,7 @@ class StrokeSimulation:
         """
         
         if seed is not None:
-            random.seed(seed)
+            np.random.seed(seed) 
         
         self.population_size = population_size
         self.annual_incidence_rate = annual_incidence_rate
@@ -72,53 +138,28 @@ class StrokeSimulation:
         self.stroke_log = []  # will store tuples of (person_id, month_of_stroke)
         self.monthly_stroke_counts = [0] * self.total_months
         self.monthly_alive_counts = [0] * self.total_months
-        
+        self.risk_model = risk_model or RiskModel()
         # Initialize population
         self._initialize_population()
-    
-    def _initialize_population(self):
-        """Create and store Person objects for the simulation."""
-        for i in range(self.population_size):
-            # Optional: assign random age if requested
-            age = None
-            if self.age_distribution:
-                age = random.randint(self.initial_age_range[0],
-                                     self.initial_age_range[1])
-            
-            person = Person(
-                person_id=i,
-                has_stroke=False,
-                stroke_month=None,
-                is_alive=True,
-                age=age
-            )
-            self.population.append(person)
-    
-    def run_simulation(self):
-        """
-        Run the month-by-month simulation.
-        For each month:
-         - Optionally update ages.
-         - Optionally check mortality (non-stroke).
-         - Check stroke occurrence.
-         - Track how many are still alive and stroke-free.
-        """
-        
+
+    def run_simulation(self) -> None:
+        """Run the month-by-month simulation."""
+        self.logger.info("Starting population simulation")
+        progress_interval = self.total_months // 10
+
         for month in range(self.total_months):
-            # (Optional) Age each person by 1/12th of a year
+            if month % progress_interval == 0:
+                print(f"Population Simulation {(month/self.total_months)*100:.0f}% complete...")
+        
             self._age_update(month)
-            
-            # Mortality check (if enabled)
             if self.include_mortality:
                 self._apply_mortality(month)
-            
-            # Stroke check
             self._apply_stroke(month)
-            
-            # Count how many are alive (for optional monthly tracking)
             alive_count = sum(p.is_alive for p in self.population)
             self.monthly_alive_counts[month] = alive_count
-    
+        print("Population Simulation complete.") 
+        self.logger.info("Population simulation complete")
+
     def _age_update(self, month: int):
         """Increment age by 1 year each 12-month interval (if age distribution is used)."""
         if self.age_distribution and month > 0 and (month % 12 == 0):
@@ -159,7 +200,118 @@ class StrokeSimulation:
                     stroke_count_this_month += 1
         
         self.monthly_stroke_counts[month] = stroke_count_this_month
+
+    def run_risk_prediction(self):
+        """Run monthly risk predictions for each person"""
+        progress_interval = self.total_months // 10
+
+        for month in range(self.total_months):
+            if month % progress_interval == 0:
+                print(f"Risk prediction {(month/self.total_months)*100:.0f}% complete...")
+                
+            for person in self.population:
+                try:
+                    if not person.is_alive:
+                        person.monthly_risk_scores.append(None)
+                        continue
+
+                    will_have_stroke = False
+                    if person.stroke_month is not None:
+                        months_until_stroke = person.stroke_month - month
+                        if 0 <= months_until_stroke < 12:
+                            will_have_stroke = True
+
+                    risk_score = self.risk_model.predict_risk(will_have_stroke)
+                    person.monthly_risk_scores.append(risk_score)
+                except Exception as e:
+                    print(f"Error processing person {person.person_id} at month {month}: {e}")
+                    raise
+        print("Risk prediction complete.")
+
+
+    def _initialize_population(self):
+        """Create and store Person objects for the simulation."""
+        for i in range(self.population_size):
+            # Optional: assign random age if requested
+            age = None
+            if self.age_distribution:
+                age = random.randint(self.initial_age_range[0],
+                                     self.initial_age_range[1])
+            
+            person = Person(
+                person_id=i,
+                has_stroke=False,
+                stroke_month=None,
+                is_alive=True,
+                age=age
+            )
+            self.population.append(person)
     
+class SimulationRunner(StrokeSimulation):
+    """Manages running both population and risk prediction simulations"""
+    def __init__(self, simulation_params: dict):
+        super().__init__(**simulation_params)
+        self.simulation_id = f"sim_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{str(uuid.uuid4())[:8]}"
+        self.logger = setup_logging(self.simulation_id)
+        self.logger.info(f"Initializing simulation {self.simulation_id}")
+        self.logger.info(f"Parameters: {simulation_params}")
+
+    def run_all(self) -> dict:
+        """Run both population and risk prediction simulations"""
+        self.run_simulation()
+        self.run_risk_prediction()
+        return self.get_results()
+
+ 
+
+    def get_results(self):
+        """Return results and save to pickle file with unique ID"""
+        self.logger.info("Saving simulation results")
+        simulation_id = f"sim_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{str(uuid.uuid4())[:8]}"
+    
+        config = {
+            'population_size': self.population_size,
+            'annual_incidence_rate': self.annual_incidence_rate,
+            'num_years': self.num_years,
+            'include_mortality': self.include_mortality,
+            'annual_mortality_rate': self.annual_mortality_rate,
+            'age_distribution': self.age_distribution,
+            'initial_age_range': self.initial_age_range,
+            'simulation_id': simulation_id
+        }
+    
+        data = []
+        for person in self.population:
+            data.append({
+                'person_id': person.person_id,
+                'had_stroke': person.has_stroke,
+                'stroke_month': person.stroke_month,
+                'is_alive': person.is_alive,
+                'age': person.age,
+                'risk_scores': person.monthly_risk_scores,
+                'simulation_id': simulation_id
+            })
+        
+        df = pd.DataFrame(data)
+        
+        # Save both configuration and results
+        results_filename = f'simulation_results_{simulation_id}.pkl'
+        pd.to_pickle({'config': config, 'data': df}, results_filename)
+        
+        results = {
+            "stroke_log": self.stroke_log,
+            "monthly_stroke_counts": self.monthly_stroke_counts,
+            "monthly_alive_counts": self.monthly_alive_counts,
+            "final_population": self.population,
+            "dataframe": df,
+            "simulation_id": simulation_id,
+            "config": config
+        }
+        
+        self.logger.info(f"Results saved to " + results_filename)
+
+        return results
+
     def summarize_results(self):
         """
         Provide a final report of key statistics.
@@ -211,53 +363,21 @@ class StrokeSimulation:
         for event in self.stroke_log[:10]:
             print(f"Person {event[0]} had a stroke in month {event[1]}")
         print("...")
-    
-    def get_results(self):
-        """
-        Return structured results for programmatic use:
-        - stroke_log: list of (person_id, month_of_stroke)
-        - monthly_stroke_counts
-        - monthly_alive_counts
-        - final population state
-        """
-        results = {
-            "stroke_log": self.stroke_log,
-            "monthly_stroke_counts": self.monthly_stroke_counts,
-            "monthly_alive_counts": self.monthly_alive_counts,
-            "final_population": self.population
-        }
-        return results
 
-def main():
-    # Example usage:
+def main():    
+    simulation_params = {
+        "population_size": 40000,
+        "annual_incidence_rate": 0.05,  # 0.2% annual stroke incidence
+        "num_years": 2,
+        "seed": 42,
+        "include_mortality": True,
+        "annual_mortality_rate": 0.01,
+        "age_distribution": True,
+        "initial_age_range": (30, 70)
+    }
     
-    # Configuration (example values):
-    N = 600000                  # population size
-    annual_incidence = 0.002  # 0.2% annual stroke incidence
-    years = 50                # simulate for 10 years
-    seed_value = 42           # for reproducibility
-    
-    # Create the simulation instance
-    sim = StrokeSimulation(
-        population_size=N,
-        annual_incidence_rate=annual_incidence,
-        num_years=years,
-        seed=seed_value,
-        include_mortality=True,
-        annual_mortality_rate=0.01,
-        age_distribution=True,
-        initial_age_range=(30, 70)
-    )
-    
-    # Run the simulation
-    sim.run_simulation()
-    
-    # Print a summary
-    sim.summarize_results()
-    
-    # Retrieve detailed results if needed
-    results = sim.get_results()
-    # e.g., you could save these to a file or do further analysis
-
+    runner = SimulationRunner(simulation_params)
+    results = runner.run_all()
+    runner.summarize_results()
 if __name__ == "__main__":
     main()
