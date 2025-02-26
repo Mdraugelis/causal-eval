@@ -1,0 +1,8 @@
+population_size: 40000
+annual_incidence_rate: 0.05
+num_years: 2
+seed: 42
+include_mortality: true
+annual_mortality_rate: 0.01
+age_distribution: true
+initial_age_range: [30, 70]

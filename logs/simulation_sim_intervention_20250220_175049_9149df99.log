@@ -1,0 +1,3 @@
+2025-02-20 17:50:49,842 - INFO - Initializing simulation sim_intervention_20250220_175049_9149df99
+2025-02-20 17:50:49,842 - INFO - Parameters: {'population_size': 40000, 'annual_incidence_rate': 0.05, 'num_years': 2, 'seed': 42, 'include_mortality': True, 'annual_mortality_rate': 0.01, 'age_distribution': True, 'initial_age_range': (30, 70), 'risk_model': RiskModel(predict_positive_mean=0.8, predict_positive_std=0.1, predict_negative_mean=0.2, predict_negative_std=0.1), 'intervention_effectiveness': 0.3, 'num_interventions': 250}
+2025-02-20 17:50:50,650 - INFO - Simulation summary complete.
