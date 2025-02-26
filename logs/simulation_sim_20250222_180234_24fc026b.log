@@ -1,6 +1,0 @@
-2025-02-22 18:02:34,243 - INFO - Initializing simulation sim_20250222_180234_24fc026b
-2025-02-22 18:02:34,243 - INFO - Parameters: {'population_size': 40000, 'annual_incidence_rate': 0.05, 'num_years': 2, 'seed': 42, 'include_mortality': True, 'annual_mortality_rate': 0.01, 'age_distribution': True, 'initial_age_range': [30, 70]}
-2025-02-22 18:02:34,243 - INFO - Starting population simulation
-2025-02-22 18:02:34,402 - INFO - Population simulation complete
-2025-02-22 18:02:35,774 - INFO - Saving simulation results
-2025-02-22 18:02:35,809 - INFO - Results saved to simulation_results_sim_20250222_180235_a705aa86.pkl
