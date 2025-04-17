@@ -1,79 +1,192 @@
-# Stroke Incidence & Intervention Simulation
+# Causal Evaluation Framework for Healthcare Interventions
 
-**A Python-based simulation framework for exploring stroke incidence, machine learning–based risk models, and intervention strategies.** This repository offers:
+**A Python-based framework for simulating healthcare interventions and evaluating their causal effects.** This repository contains two main applications:
 
-- **Stroke Population Simulation**: Create synthetic populations with configurable incidence and risk factors.
-- **Machine Learning Risk Score Simulator**: Assign risk scores to each individual, matching desired sensitivity, specificity, and PPV.
-- **Intervention Protocol Simulator**: Model targeted interventions (e.g., monthly ranking of high-risk individuals) and measure impact with causal inference methods such as **Difference-in-Differences (DiD)** and **Regression Discontinuity (RD)**.
+1. **Stroke Simulation Framework**: Simulate stroke events in a population over time, with or without interventions.
+2. **Causal Analysis Tools**: Generate synthetic data and apply causal inference methods to evaluate intervention effectiveness.
+
+[![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)](tests/)
+[![Coverage](https://img.shields.io/badge/coverage-42%25-yellow.svg)](tests/run_tests.py)
 
 ---
 
 ## Table of Contents
 
-1. [Overview](#overview)  
-2. [Key Features](#key-features)   
-5. [Simulation Workflow](#simulation-workflow)  
-6. [Causal Inference Modules](#causal-inference-modules)  
-
-
----
-
-## Overview
-
-Healthcare researchers, data scientists, and public health analysts often need **synthetic data** to test ideas, develop machine learning models, or evaluate the efficacy of interventions. This repository provides a simulation environment for:
-
-1. **Generating a synthetic population** with user-defined sizes, stroke prevalence, and risk distributions.
-2. **Assigning risk scores** to individuals using machine learning model assumptions (e.g., specify target sensitivity, specificity, PPV).
-3. **Applying interventions**, such as selecting top-risk patients monthly for a risk reduction protocol, and measuring outcomes.
-
-You can **compare** different intervention strategies or evaluate the performance of causal inference methods (RD, DiD) under controlled, simulated conditions.
+1. [Applications Overview](#applications-overview)
+2. [Installation](#installation)
+3. [Usage](#usage)
+   - [Stroke Simulation](#stroke-simulation)
+   - [Causal Analysis](#causal-analysis)
+4. [Testing](#testing)
+5. [Features](#features)
+6. [Configuration](#configuration)
 
 ---
 
-## Key Features
+## Applications Overview
 
-- **Configurable Population**  
-  - Specify population size, age distribution, comorbidities, and mortality assumptions.
-- **Monthly Stroke Incidence Model**  
-  - Convert annual stroke incidence to monthly probabilities, or use a survival/hazard function.
-  - Log stroke events by individual and month.
-- **Machine Learning Risk Score Simulator**  
-  - Assign risk scores that reflect a chosen sensitivity, specificity, and positive predictive value.
-  - Flexible threshold-based labeling.
-- **Intervention Protocol**  
-  - Rank patients each month by their risk.
-  - Assign an intervention to the top X (e.g., 250) or anyone above a certain threshold.
-  - Reduce stroke risk by a configurable percentage.
-- **Causal Inference Evaluation**  
-  - **Difference-in-Differences (DiD)**: Define treatment/control groups with pre-/post-intervention periods.
-  - **Regression Discontinuity (RD)**: Implement a cutoff-based intervention assignment to test RD assumptions.
-- **Detailed Logging & Reporting**  
-  - Monthly incidence, cumulative stroke counts, confusion matrices for ML models, etc.
+### 1. Stroke Simulation Framework
 
-## Simulation Workflow
-1. Population Initialization
-- Create N individuals with baseline risk factors, ages, and IDs.
-2. Risk Model (Optional)
-- Assign or compute monthly stroke probabilities.
-- If using a machine learning approach, create or load a model to generate risk scores.
-3. Monthly Loop
-- Update each person’s risk (e.g., increment age, apply hazard function).
-- Rank individuals (top 250 or threshold-based).
-- Intervention: Reduce risk for selected individuals by XX%.
-- Simulate stroke events.
-- Log outcomes.
-4. Final Reporting
-- Cumulative strokes, survival curves, incidence rates.
-- Compare intervention vs. non-intervention.
-- Summaries of model performance (sensitivity, specificity, PPV).
+The stroke simulation framework models stroke events in a population over time. It includes:
 
-## Causal Inference Modules
-Difference-in-Differences (DiD)
-- Pre/Post Periods: Run the simulation with a baseline (no intervention) phase and an intervention phase.
-- Treatment vs. Control: Randomly assign part of the population to treatment at a specific time.
-- Analysis: Estimate DiD effect by comparing changes in stroke incidence between groups over time.
+- **Base Simulation** (`strokesimulation.py`): Simulate a population with configurable stroke incidence and mortality rates.
+- **Intervention Simulation** (`intervention_sim.py`): Enhanced simulation that allows for monthly targeted interventions based on risk scores.
 
-Regression Discontinuity (RD)
-- Cutoff: Define a stable threshold on the risk score to assign treatment vs. non-treatment.
-- Local Randomization: Explore outcomes for individuals near the threshold.
-- Analysis: Estimate RD effect and compare to known, simulated ground truth.
+Both simulations track individual outcomes over time, generate risk scores for each person, and enable evaluation of different intervention strategies.
+
+### 2. Causal Analysis Tools
+
+The causal analysis tools provide methods for evaluating the causal effect of interventions:
+
+- **Regression Discontinuity Analysis** (`reg_disc.py`): Implement RD design to evaluate intervention effectiveness at a threshold.
+- **Synthetic Data Generation** (`claude_run.py`): Generate synthetic populations with controlled characteristics for causal evaluation.
+- **Parameter Optimization** (`sim_grid_search.py`): Find optimal beta distribution parameters for simulating risk scores.
+
+These tools enable researchers to test causal inference methods in controlled environments where ground truth is known.
+
+---
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Mdraugelis/causal-eval.git
+   cd causal-eval
+   ```
+
+2. Create and activate a virtual environment:
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
+
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+---
+
+## Usage
+
+### Stroke Simulation
+
+#### Basic Simulation
+
+Run a basic stroke simulation without interventions:
+
+```bash
+python -c "from src.strokesimulation import main; main()"
+```
+
+This will use the parameters defined in `config.yaml` to run the simulation.
+
+#### Intervention Simulation
+
+Run a simulation with monthly targeted interventions:
+
+```bash
+python -c "from src.intervention_sim import main; main()"
+```
+
+This simulation selects high-risk individuals each month for intervention and reduces their stroke probability.
+
+### Causal Analysis
+
+#### Regression Discontinuity Analysis
+
+To run regression discontinuity analysis on simulation results:
+
+```bash
+python src/reg_disc.py --input_file results/simulation_results_XXXX.pkl
+```
+
+Replace `XXXX` with the simulation ID from a previous run.
+
+#### Synthetic Data and RD Simulation
+
+Generate synthetic data and run an RD analysis:
+
+```python
+from src.claude_run import run_simulation_rd
+
+results = run_simulation_rd(
+    pop_size=50_000,
+    baseline_prevalence=0.05,
+    top_k_factor=2,
+    intervention_efficacy=0.3,
+    top_k=250,
+    months=12,
+    bandwidth=0.02,
+    random_seed=42
+)
+```
+
+#### Parameter Grid Search
+
+Optimize beta distribution parameters for risk score generation:
+
+```bash
+python src/sim_grid_search.py
+```
+
+Follow the interactive prompts to specify target PPV, sensitivity, and other parameters.
+
+---
+
+## Testing
+
+Run the test suite with coverage reporting:
+
+```bash
+python tests/run_tests.py
+```
+
+This will generate a test report and create a coverage report in `coverage_html/index.html`.
+
+---
+
+## Features
+
+- **Configurable Population**: Specify population size, age distribution, and baseline risk
+- **Risk Modeling**: Generate risk scores with configurable distributions
+- **Intervention Strategies**: Test different selection criteria and effectiveness levels
+- **Causal Inference**: Implement and validate RD designs
+- **Detailed Logging**: Track outcomes at individual and population levels
+- **Visualization**: Generate plots for RD analysis and risk distributions
+
+---
+
+## Configuration
+
+The simulation parameters can be configured in `config.yaml`:
+
+```yaml
+# Example configuration
+population_size: 40000
+annual_incidence_rate: 0.05
+num_years: 2
+include_mortality: true
+annual_mortality_rate: 0.01
+age_distribution: true
+initial_age_range: [30, 70]
+```
+
+For the intervention simulation, additional parameters can be specified:
+
+```python
+intervention_effectiveness: 0.2  # 20% reduction in stroke risk
+num_interventions: 250          # Top 250 patients selected monthly
+```
+
+---
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+---
+
+## License
+
+This project is open source and available under the MIT License.
