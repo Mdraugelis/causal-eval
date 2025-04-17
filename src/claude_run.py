@@ -5,9 +5,9 @@ import statsmodels.formula.api as smf
 from typing import Tuple, List, Dict, Optional
 import seaborn as sns
 
-def generate_population(pop_size=100_000, 
-                       baseline_prevalence=0.05,
-                       top_k_factor=2,
+def generate_population(pop_size=40_000, 
+                       baseline_prevalence=0.089,
+                       top_k_factor=3,
                        top_k=250,
                        noise_level=0.03):
     """
