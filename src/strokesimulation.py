@@ -63,6 +63,10 @@ class Person:
 class StrokeSimulation:
     """
     A Python-based simulation of stroke incidence in a population.
+    
+    This class simulates stroke events in a synthetic population over time,
+    with configurable parameters for incidence rates, mortality, age distributions,
+    and risk prediction models.
     """
     def __init__(self,
                  population_size: int,
@@ -74,6 +78,20 @@ class StrokeSimulation:
                  age_distribution: bool = False,
                  initial_age_range: tuple = (20, 80),
                  risk_model: Optional[RiskModel] = None):
+        """
+        Initialize the stroke simulation with population parameters.
+        
+        Args:
+            population_size: Number of individuals in the simulation
+            annual_incidence_rate: Annual probability of stroke (0.0-1.0)
+            num_years: Duration of simulation in years
+            seed: Random seed for reproducibility
+            include_mortality: Whether to simulate deaths
+            annual_mortality_rate: Annual probability of death (0.0-1.0)
+            age_distribution: Whether to assign ages to individuals
+            initial_age_range: Tuple of (min_age, max_age) for initial population
+            risk_model: Custom risk model or None to use default
+        """
         if seed is not None:
             np.random.seed(seed) 
         
@@ -95,14 +113,24 @@ class StrokeSimulation:
             self.monthly_mortality_prob = 1 - (1 - self.annual_mortality_rate) ** (1/12)
         
         self.population: List[Person] = []
-        self.stroke_log = []  # Stores tuples of (person_id, month_of_stroke)
-        self.monthly_stroke_counts = [0] * self.total_months
-        self.monthly_alive_counts = [0] * self.total_months
-        self.risk_model = risk_model or RiskModel()
+        self.stroke_log: List[tuple[int, int]] = []  # Stores tuples of (person_id, month_of_stroke)
+        self.monthly_stroke_counts: List[int] = [0] * self.total_months
+        self.monthly_alive_counts: List[int] = [0] * self.total_months
+        self.risk_model: RiskModel = risk_model or RiskModel()
+        
+        # Initialize logger
+        self.logger = logging.getLogger(__name__)
         
         self._initialize_population()
 
     def run_simulation(self) -> None:
+        """
+        Run the complete stroke simulation over the specified time period.
+        
+        This method simulates the population over time, updating ages,
+        applying mortality (if enabled), and simulating stroke events month by month.
+        Tracks alive counts and stroke counts for each month.
+        """
         self.logger.info("Starting population simulation")
         progress_interval = self.total_months // 10
 
@@ -118,19 +146,43 @@ class StrokeSimulation:
         print("Population Simulation complete.") 
         self.logger.info("Population simulation complete")
 
-    def _age_update(self, month: int):
+    def _age_update(self, month: int) -> None:
+        """
+        Update the age of each person in the population if age distribution is enabled.
+        
+        Ages are incremented once per simulated year.
+        
+        Args:
+            month: Current simulation month
+        """
         if self.age_distribution and month > 0 and (month % 12 == 0):
             for person in self.population:
                 if person.is_alive:
                     person.age += 1
     
-    def _apply_mortality(self, month: int):
+    def _apply_mortality(self, month: int) -> None:
+        """
+        Apply mortality to the population based on monthly probability.
+        
+        Mortality is only applied to individuals who have not had a stroke.
+        
+        Args:
+            month: Current simulation month
+        """
         for person in self.population:
             if person.is_alive and not person.has_stroke:
                 if random.random() < self.monthly_mortality_prob:
                     person.is_alive = False
     
-    def _apply_stroke(self, month: int):
+    def _apply_stroke(self, month: int) -> None:
+        """
+        Apply stroke events to the population based on monthly probability.
+        
+        Tracks stroke occurrences and updates person status.
+        
+        Args:
+            month: Current simulation month
+        """
         stroke_count_this_month = 0
         for person in self.population:
             if person.is_alive and not person.has_stroke:
@@ -142,8 +194,13 @@ class StrokeSimulation:
                     stroke_count_this_month += 1
         self.monthly_stroke_counts[month] = stroke_count_this_month
 
-    def run_risk_prediction(self):
-        """Original risk prediction method (can be overridden)."""
+    def run_risk_prediction(self) -> None:
+        """
+        Generate risk predictions for each person for each month of the simulation.
+        
+        Calculates risk scores using the risk model, predicting which individuals 
+        will have a stroke within the next 12 months.
+        """
         progress_interval = self.total_months // 10
         for month in range(self.total_months):
             if month % progress_interval == 0:
@@ -165,7 +222,13 @@ class StrokeSimulation:
                     raise
         print("Risk prediction complete.")
 
-    def _initialize_population(self):
+    def _initialize_population(self) -> None:
+        """
+        Initialize the simulated population.
+        
+        Creates Person objects for each individual in the population,
+        assigning ages if age distribution is enabled.
+        """
         for i in range(self.population_size):
             age = None
             if self.age_distribution:
