@@ -11,9 +11,10 @@ def generate_population(pop_size=40_000,
                        top_k=250,
                        noise_level=0.03):
     """
-    Create a synthetic population with a 'true_risk' of stroke
-    and some model score 'pred_score'. We'll adjust correlation
-    so that the top 250 have ~12% real risk on average.
+    Create a synthetic population with a ``true_risk`` of stroke and
+    a model score ``pred_score``. The predicted scores are calibrated
+    such that the ``top_k`` patients achieve the desired positive
+    predictive value.
     
     Parameters:
     -----------
@@ -52,11 +53,17 @@ def generate_population(pop_size=40_000,
     target_ppv = monthly_prevalence * top_k_factor
 
     # Create predicted score with noise
-    calibrate_model_score(df, top_k=250, target_ppv=target_ppv, 
-                          initial_noise=noise_level)
+    calibrate_model_score(
+        df,
+        top_k=top_k,
+        target_ppv=target_ppv,
+        initial_noise=noise_level,
+    )
     
     print(f"Population generated. Overall risk: {df['true_risk'].mean():.4f}")
-    print(f"Top 250 average true risk: {df['true_risk'].nlargest(top_k).mean():.4f}")
+    print(
+        f"Top {top_k} average true risk: {df['true_risk'].nlargest(top_k).mean():.4f}"
+    )
     
     return df
 
