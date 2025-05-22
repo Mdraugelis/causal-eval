@@ -60,9 +60,14 @@ These tools enable researchers to test causal inference methods in controlled en
    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
    ```
 
-3. Install dependencies:
+3. Install the core dependencies:
    ```bash
    pip install -r requirements.txt
+   ```
+
+4. *(Optional)* Install additional packages for notebook analysis:
+   ```bash
+   pip install -r requirements-notebook.txt
    ```
 
 ---
