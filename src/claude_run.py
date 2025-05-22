@@ -3,7 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import statsmodels.formula.api as smf
 from typing import Tuple, List, Dict, Optional
-import seaborn as sns
 
 def generate_population(pop_size=40_000, 
                        baseline_prevalence=0.089,
