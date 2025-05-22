@@ -442,7 +442,7 @@ def run_simulation_rd(pop_size=100_000,
         print(f"Naive difference in means: {naive_effect:.6f}")
         print(f"RD estimate (at threshold): {rd_results['interaction']['coef']:.6f}")
         expected_effect = intervention_efficacy * target_ppv
-        print(f"Expected effect (intervention_efficacy × risk at threshold): {-expected_effect:.6f}")
+        print(f"Expected effect (intervention_efficacy × risk at threshold): {expected_effect:.6f}")
         
         # Prepare results dictionary
         results = {
@@ -459,7 +459,7 @@ def run_simulation_rd(pop_size=100_000,
                 "untreated_event_rate": untreated_mean,
                 "naive_effect": naive_effect,
                 "rd_effect": rd_results["interaction"]["coef"],
-                "expected_effect": -expected_effect
+                "expected_effect": expected_effect
             }
         }
         
