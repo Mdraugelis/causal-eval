@@ -92,8 +92,6 @@ def calibrate_model_score(df, top_k=250, target_ppv=0.12, initial_noise=0.03, ma
         df["pred_score"] = df["true_risk"] + noise
         
         # Clip to valid probability range
-        raw_score = df["true_risk"] + noise
-        
         df["pred_score"] = np.clip(df["pred_score"], 0, 1)
         
         # Measure current PPV
