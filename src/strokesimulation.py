@@ -1,15 +1,23 @@
 import random
-import math, numpy as np
+import math
 from dataclasses import dataclass, field
 from typing import List, Optional
-import pandas as pd
+try:
+    import pandas as pd  # type: ignore
+except ModuleNotFoundError:  # pragma: no cover - optional dependency
+    pd = None
 import uuid
 from datetime import datetime
 import logging
 from pathlib import Path
-import yaml
+try:
+    import yaml  # type: ignore
+except ModuleNotFoundError:  # pragma: no cover - optional dependency
+    yaml = None
 
 def load_config(filepath="config.yaml") -> dict:
+    if yaml is None:
+        raise ImportError("PyYAML is required for loading configuration")
     with open(filepath, "r") as f:
         config = yaml.safe_load(f)
     return config
@@ -41,11 +49,11 @@ class RiskModel:
         if is_positive == False:
             if neg_alpha >= 1 or neg_beta <= 1:
                 raise ValueError(f"For right-skewed Beta (negative events), expect neg_alpha < 1 and neg_beta > 1; got neg_alpha={neg_alpha}, neg_beta={neg_beta}.")
-            return np.random.beta(neg_alpha, neg_beta)
+            return random.betavariate(neg_alpha, neg_beta)
         elif is_positive == True:
             if pos_alpha <= 1 or pos_beta >= 1:
                 raise ValueError(f"For left-skewed Beta (positive events), expect pos_alpha > 1 and pos_beta < 1; got pos_alpha={pos_alpha}, pos_beta={pos_beta}.")
-            return np.random.beta(pos_alpha, pos_beta)
+            return random.betavariate(pos_alpha, pos_beta)
         else:
             raise ValueError('is_positive must be either False or True.')
 
@@ -93,7 +101,7 @@ class StrokeSimulation:
             risk_model: Custom risk model or None to use default
         """
         if seed is not None:
-            np.random.seed(seed) 
+            random.seed(seed)
         
         self.population_size = population_size
         self.annual_incidence_rate = annual_incidence_rate
@@ -250,7 +258,10 @@ class SimulationRunner(StrokeSimulation):
         self.logger = setup_logging(self.simulation_id)
         self.logger.info(f"Initializing simulation {self.simulation_id}")
         self.logger.info(f"Parameters: {simulation_params}")
-        self.master_df = pd.DataFrame()      # To accumulate monthly DataFrames
+        if pd is None:
+            self.master_df = None
+        else:
+            self.master_df = pd.DataFrame()  # To accumulate monthly DataFrames
         self.monthly_metrics = []            # To store performance metrics for each month
 
     def run_all(self) -> dict:
@@ -282,16 +293,18 @@ class SimulationRunner(StrokeSimulation):
                     raise
             # After computing risk scores for this month, perform monthly analysis:
             monthly_df = self.analyze_month_data(month)
-            # Append this month's DataFrame to the master DataFrame
-            if self.master_df.empty:
-                self.master_df = monthly_df.copy()
-            else:
-                self.master_df = pd.concat([self.master_df, monthly_df], ignore_index=True)
+            if self.master_df is not None:
+                if self.master_df.empty:
+                    self.master_df = monthly_df.copy()
+                else:
+                    self.master_df = pd.concat([self.master_df, monthly_df], ignore_index=True)
         print("Risk prediction and monthly analysis complete.")
 
-    def analyze_month_data(self, month: int) -> pd.DataFrame:
+    def analyze_month_data(self, month: int) -> 'pd.DataFrame':
         """Creates a DataFrame for the given month, computes performance metrics,
         and saves the result as a pickle file."""
+        if pd is None:
+            raise ImportError("pandas is required for analyze_month_data")
         monthly_records = []
         for person in self.population:
             risk_score = (person.monthly_risk_scores[month]
@@ -364,6 +377,8 @@ class SimulationRunner(StrokeSimulation):
                 'simulation_id': simulation_id
             })
         
+        if pd is None:
+            raise ImportError("pandas is required for saving results")
         df = pd.DataFrame(data)
         # Update file paths
         results_filename = results_dir / f'simulation_results_{simulation_id}.pkl'

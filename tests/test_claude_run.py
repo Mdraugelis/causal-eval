@@ -1,15 +1,22 @@
 import unittest
-import pandas as pd
-import numpy as np
-from unittest.mock import patch, MagicMock
-from src.claude_run import (
-    generate_population, 
-    calibrate_model_score, 
-    simulate_monthly_intervention, 
-    run_rd_analysis,
-    run_simulation_rd
-)
+import importlib
 
+pd_spec = importlib.util.find_spec("pandas")
+np_spec = importlib.util.find_spec("numpy")
+
+if pd_spec is not None and np_spec is not None:
+    import pandas as pd
+    import numpy as np
+    from src.claude_run import (
+        generate_population,
+        calibrate_model_score,
+        simulate_monthly_intervention,
+        run_rd_analysis,
+        run_simulation_rd
+    )
+from unittest.mock import patch, MagicMock
+
+@unittest.skipUnless(pd_spec is not None and np_spec is not None, "pandas/numpy not available")
 class TestClaudeRun(unittest.TestCase):
     def setUp(self):
         # Set fixed random seed for reproducibility

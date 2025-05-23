@@ -1,9 +1,16 @@
 import unittest
-import pandas as pd
-import numpy as np
-from unittest.mock import patch, mock_open, MagicMock
-from src.reg_disc import prepare_data, run_rdd_regression
+import importlib
 
+pd_spec = importlib.util.find_spec("pandas")
+np_spec = importlib.util.find_spec("numpy")
+
+if pd_spec is not None and np_spec is not None:
+    import pandas as pd
+    import numpy as np
+    from src.reg_disc import prepare_data, run_rdd_regression
+from unittest.mock import patch, mock_open, MagicMock
+
+@unittest.skipUnless(pd_spec is not None and np_spec is not None, "pandas/numpy not available")
 class TestRegDisc(unittest.TestCase):
     def setUp(self):
         # Create a test dataframe

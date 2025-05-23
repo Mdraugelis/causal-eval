@@ -1,7 +1,13 @@
 import unittest
-import numpy as np
-from src.sim_grid_search import simulate_run
+import importlib
 
+np_spec = importlib.util.find_spec("numpy")
+
+if np_spec is not None:
+    import numpy as np
+    from src.sim_grid_search import simulate_run
+
+@unittest.skipUnless(np_spec is not None, "numpy not available")
 class TestSimGridSearch(unittest.TestCase):
     def setUp(self):
         # Set a fixed seed for reproducibility

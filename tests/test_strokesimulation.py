@@ -1,11 +1,11 @@
 import unittest
-import numpy as np
+import random
 from src.strokesimulation import RiskModel, Person, StrokeSimulation
 
 class TestRiskModel(unittest.TestCase):
     def setUp(self):
         self.risk_model = RiskModel()
-        np.random.seed(42)  # For reproducibility
+        random.seed(42)  # For reproducibility
     
     def test_predict_risk_positive(self):
         # Test positive prediction
