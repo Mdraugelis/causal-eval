@@ -1,12 +1,11 @@
 import pytest
-import numpy as np
-import pandas as pd
+import random
 from pathlib import Path
 
 @pytest.fixture(scope="session")
 def setup_test_environment():
     # Set fixed random seed for reproducibility
-    np.random.seed(42)
+    random.seed(42)
     
     # Ensure results directory exists for tests
     results_dir = Path("results")

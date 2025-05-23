@@ -6,15 +6,19 @@ Runs tests with coverage reporting.
 import os
 import sys
 import pytest
-import coverage
+try:
+    import coverage
+except ModuleNotFoundError:  # pragma: no cover - coverage is optional
+    coverage = None
 
 def main():
-    # Start coverage measurement
-    cov = coverage.Coverage(
-        source=["src"],
-        omit=["*/__pycache__/*", "*/test_*.py"]
-    )
-    cov.start()
+    cov = None
+    if coverage is not None:
+        cov = coverage.Coverage(
+            source=["src"],
+            omit=["*/__pycache__/*", "*/test_*.py"]
+        )
+        cov.start()
     
     # Run pytest
     args = [
@@ -28,13 +32,15 @@ def main():
     result = pytest.main(args)
     
     # Stop coverage and generate reports
-    cov.stop()
-    cov.save()
-    cov.report()
+    if cov is not None:
+        cov.stop()
+        cov.save()
+        cov.report()
     
     # Generate HTML report
-    cov.html_report(directory="coverage_html")
-    print(f"HTML coverage report generated in coverage_html/index.html")
+    if cov is not None:
+        cov.html_report(directory="coverage_html")
+        print("HTML coverage report generated in coverage_html/index.html")
     
     return result
 

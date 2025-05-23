@@ -1,7 +1,9 @@
 import random
 import math
-import numpy as np
-import pandas as pd
+try:
+    import pandas as pd  # type: ignore
+except ModuleNotFoundError:  # pragma: no cover - optional dependency
+    pd = None
 import uuid
 import logging
 from datetime import datetime
@@ -44,11 +46,11 @@ class RiskModel:
         if is_positive is False:
             if neg_alpha >= 1 or neg_beta <= 1:
                 raise ValueError(f"For right-skewed Beta (negative events), expect neg_alpha < 1 and neg_beta > 1; got neg_alpha={neg_alpha}, neg_beta={neg_beta}.")
-            return np.random.beta(neg_alpha, neg_beta)
+            return random.betavariate(neg_alpha, neg_beta)
         elif is_positive is True:
             if pos_alpha <= 1 or pos_beta >= 1:
                 raise ValueError(f"For left-skewed Beta (positive events), expect pos_alpha > 1 and pos_beta < 1; got pos_alpha={pos_alpha}, pos_beta={pos_beta}.")
-            return np.random.beta(pos_alpha, pos_beta)
+            return random.betavariate(pos_alpha, pos_beta)
         else:
             raise ValueError('is_positive must be either False or True.')
 
@@ -93,7 +95,6 @@ class StrokeSimulationWithIntervention:
                  intervention_effectiveness: float = 0.3,  # e.g., 30% reduction in stroke risk
                  num_interventions: int = 250):
         if seed is not None:
-            np.random.seed(seed)
             random.seed(seed)
         
         self.population_size = population_size
@@ -242,6 +243,8 @@ class StrokeSimulationWithIntervention:
                 'intervention_month': person.intervention_month,
                 'simulation_id': simulation_id
             })
+        if pd is None:
+            raise ImportError("pandas is required for saving results")
         df = pd.DataFrame(data)
         results_filename = f'simulation_results_{simulation_id}.pkl'
         pd.to_pickle({'config': config, 'data': df}, results_filename)
