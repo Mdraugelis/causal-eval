@@ -6,7 +6,7 @@
 2. **Causal Analysis Tools**: Generate synthetic data and apply causal inference methods to evaluate intervention effectiveness.
 
 [![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)](tests/)
-[![Coverage](https://img.shields.io/badge/coverage-42%25-yellow.svg)](tests/run_tests.py)
+[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](tests/run_tests.py)
 
 ---
 
