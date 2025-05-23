@@ -1,0 +1,112 @@
+Collecting numpy
+  Downloading numpy-2.2.6-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (62 kB)
+Collecting pandas
+  Downloading pandas-2.2.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (89 kB)
+Collecting matplotlib
+  Downloading matplotlib-3.10.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)
+Collecting statsmodels
+  Downloading statsmodels-0.14.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (9.2 kB)
+Collecting pyyaml
+  Downloading PyYAML-6.0.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (2.1 kB)
+Requirement already satisfied: pytest in /root/.pyenv/versions/3.11.12/lib/python3.11/site-packages (8.3.5)
+Collecting coverage
+  Downloading coverage-7.8.2-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (8.9 kB)
+Collecting pytest-cov
+  Downloading pytest_cov-6.1.1-py3-none-any.whl.metadata (28 kB)
+Collecting flake8
+  Downloading flake8-7.2.0-py2.py3-none-any.whl.metadata (3.8 kB)
+Requirement already satisfied: black in /root/.pyenv/versions/3.11.12/lib/python3.11/site-packages (25.1.0)
+Requirement already satisfied: isort in /root/.pyenv/versions/3.11.12/lib/python3.11/site-packages (6.0.1)
+Requirement already satisfied: mypy in /root/.pyenv/versions/3.11.12/lib/python3.11/site-packages (1.15.0)
+Collecting pre-commit
+  Downloading pre_commit-4.2.0-py2.py3-none-any.whl.metadata (1.3 kB)
+Collecting python-dateutil>=2.8.2 (from pandas)
+  Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+Collecting pytz>=2020.1 (from pandas)
+  Downloading pytz-2025.2-py2.py3-none-any.whl.metadata (22 kB)
+Collecting tzdata>=2022.7 (from pandas)
+  Downloading tzdata-2025.2-py2.py3-none-any.whl.metadata (1.4 kB)
+Collecting contourpy>=1.0.1 (from matplotlib)
+  Downloading contourpy-1.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (5.5 kB)
+Collecting cycler>=0.10 (from matplotlib)
+  Downloading cycler-0.12.1-py3-none-any.whl.metadata (3.8 kB)
+Collecting fonttools>=4.22.0 (from matplotlib)
+  Downloading fonttools-4.58.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (104 kB)
+Collecting kiwisolver>=1.3.1 (from matplotlib)
+  Downloading kiwisolver-1.4.8-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.2 kB)
+Requirement already satisfied: packaging>=20.0 in /root/.pyenv/versions/3.11.12/lib/python3.11/site-packages (from matplotlib) (25.0)
+Collecting pillow>=8 (from matplotlib)
+  Downloading pillow-11.2.1-cp311-cp311-manylinux_2_28_x86_64.whl.metadata (8.9 kB)
+Collecting pyparsing>=2.3.1 (from matplotlib)
+  Downloading pyparsing-3.2.3-py3-none-any.whl.metadata (5.0 kB)
+Collecting scipy!=1.9.2,>=1.8 (from statsmodels)
+  Downloading scipy-1.15.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (61 kB)
+Collecting patsy>=0.5.6 (from statsmodels)
+  Downloading patsy-1.0.1-py2.py3-none-any.whl.metadata (3.3 kB)
+Requirement already satisfied: iniconfig in /root/.pyenv/versions/3.11.12/lib/python3.11/site-packages (from pytest) (2.1.0)
+Requirement already satisfied: pluggy<2,>=1.5 in /root/.pyenv/versions/3.11.12/lib/python3.11/site-packages (from pytest) (1.6.0)
+Collecting mccabe<0.8.0,>=0.7.0 (from flake8)
+  Downloading mccabe-0.7.0-py2.py3-none-any.whl.metadata (5.0 kB)
+Collecting pycodestyle<2.14.0,>=2.13.0 (from flake8)
+  Downloading pycodestyle-2.13.0-py2.py3-none-any.whl.metadata (4.5 kB)
+Collecting pyflakes<3.4.0,>=3.3.0 (from flake8)
+  Downloading pyflakes-3.3.2-py2.py3-none-any.whl.metadata (3.5 kB)
+Requirement already satisfied: click>=8.0.0 in /root/.pyenv/versions/3.11.12/lib/python3.11/site-packages (from black) (8.2.1)
+Requirement already satisfied: mypy-extensions>=0.4.3 in /root/.pyenv/versions/3.11.12/lib/python3.11/site-packages (from black) (1.1.0)
+Requirement already satisfied: pathspec>=0.9.0 in /root/.pyenv/versions/3.11.12/lib/python3.11/site-packages (from black) (0.12.1)
+Requirement already satisfied: platformdirs>=2 in /root/.pyenv/versions/3.11.12/lib/python3.11/site-packages (from black) (4.3.8)
+Requirement already satisfied: typing_extensions>=4.6.0 in /root/.pyenv/versions/3.11.12/lib/python3.11/site-packages (from mypy) (4.13.2)
+Collecting cfgv>=2.0.0 (from pre-commit)
+  Downloading cfgv-3.4.0-py2.py3-none-any.whl.metadata (8.5 kB)
+Collecting identify>=1.0.0 (from pre-commit)
+  Downloading identify-2.6.11-py2.py3-none-any.whl.metadata (4.4 kB)
+Requirement already satisfied: nodeenv>=0.11.1 in /root/.pyenv/versions/3.11.12/lib/python3.11/site-packages (from pre-commit) (1.9.1)
+Collecting virtualenv>=20.10.0 (from pre-commit)
+  Using cached virtualenv-20.31.2-py3-none-any.whl.metadata (4.5 kB)
+Collecting six>=1.5 (from python-dateutil>=2.8.2->pandas)
+  Using cached six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Collecting distlib<1,>=0.3.7 (from virtualenv>=20.10.0->pre-commit)
+  Using cached distlib-0.3.9-py2.py3-none-any.whl.metadata (5.2 kB)
+Collecting filelock<4,>=3.12.2 (from virtualenv>=20.10.0->pre-commit)
+  Using cached filelock-3.18.0-py3-none-any.whl.metadata (2.9 kB)
+Downloading numpy-2.2.6-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (16.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.8/16.8 MB 31.5 MB/s eta 0:00:00
+Downloading pandas-2.2.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (13.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.1/13.1 MB 30.7 MB/s eta 0:00:00
+Downloading matplotlib-3.10.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (8.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.6/8.6 MB 31.2 MB/s eta 0:00:00
+Downloading statsmodels-0.14.4-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (10.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 30.9 MB/s eta 0:00:00
+Downloading PyYAML-6.0.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (762 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 763.0/763.0 kB 34.4 MB/s eta 0:00:00
+Downloading coverage-7.8.2-cp311-cp311-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (244 kB)
+Downloading pytest_cov-6.1.1-py3-none-any.whl (23 kB)
+Downloading flake8-7.2.0-py2.py3-none-any.whl (57 kB)
+Downloading mccabe-0.7.0-py2.py3-none-any.whl (7.3 kB)
+Downloading pycodestyle-2.13.0-py2.py3-none-any.whl (31 kB)
+Downloading pyflakes-3.3.2-py2.py3-none-any.whl (63 kB)
+Downloading pre_commit-4.2.0-py2.py3-none-any.whl (220 kB)
+Downloading cfgv-3.4.0-py2.py3-none-any.whl (7.2 kB)
+Downloading contourpy-1.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (326 kB)
+Downloading cycler-0.12.1-py3-none-any.whl (8.3 kB)
+Downloading fonttools-4.58.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (4.9 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.9/4.9 MB 33.5 MB/s eta 0:00:00
+Downloading identify-2.6.11-py2.py3-none-any.whl (99 kB)
+Downloading kiwisolver-1.4.8-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (1.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.4/1.4 MB 37.5 MB/s eta 0:00:00
+Downloading patsy-1.0.1-py2.py3-none-any.whl (232 kB)
+Downloading pillow-11.2.1-cp311-cp311-manylinux_2_28_x86_64.whl (4.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.6/4.6 MB 33.3 MB/s eta 0:00:00
+Downloading pyparsing-3.2.3-py3-none-any.whl (111 kB)
+Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+Downloading pytz-2025.2-py2.py3-none-any.whl (509 kB)
+Downloading scipy-1.15.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (37.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 37.7/37.7 MB 32.4 MB/s eta 0:00:00
+Using cached six-1.17.0-py2.py3-none-any.whl (11 kB)
+Downloading tzdata-2025.2-py2.py3-none-any.whl (347 kB)
+Using cached virtualenv-20.31.2-py3-none-any.whl (6.1 MB)
+Using cached distlib-0.3.9-py2.py3-none-any.whl (468 kB)
+Using cached filelock-3.18.0-py3-none-any.whl (16 kB)
+Installing collected packages: pytz, distlib, tzdata, six, pyyaml, pyparsing, pyflakes, pycodestyle, pillow, numpy, mccabe, kiwisolver, identify, fonttools, filelock, cycler, coverage, cfgv, virtualenv, scipy, python-dateutil, patsy, flake8, contourpy, pytest-cov, pre-commit, pandas, matplotlib, statsmodels
+
+Successfully installed cfgv-3.4.0 contourpy-1.3.2 coverage-7.8.2 cycler-0.12.1 distlib-0.3.9 filelock-3.18.0 flake8-7.2.0 fonttools-4.58.0 identify-2.6.11 kiwisolver-1.4.8 matplotlib-3.10.3 mccabe-0.7.0 numpy-2.2.6 pandas-2.2.3 patsy-1.0.1 pillow-11.2.1 pre-commit-4.2.0 pycodestyle-2.13.0 pyflakes-3.3.2 pyparsing-3.2.3 pytest-cov-6.1.1 python-dateutil-2.9.0.post0 pytz-2025.2 pyyaml-6.0.2 scipy-1.15.3 six-1.17.0 statsmodels-0.14.4 tzdata-2025.2 virtualenv-20.31.2
