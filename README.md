@@ -88,13 +88,13 @@ This will use the parameters defined in `config.yaml` to run the simulation.
 
 #### Intervention Simulation
 
-Run a simulation with monthly targeted interventions:
+Run a simulation with monthly targeted interventions using the parameters from `config.yaml`:
 
 ```bash
 python -c "from src.intervention_sim import main; main()"
 ```
 
-This simulation selects high-risk individuals each month for intervention and reduces their stroke probability.
+This simulation selects high-risk individuals each month for intervention and reduces their stroke probability based on the configuration values.
 
 ### Causal Analysis
 
