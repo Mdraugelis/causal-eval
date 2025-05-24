@@ -7,6 +7,7 @@ except ModuleNotFoundError:  # pragma: no cover - optional dependency
 import uuid
 import logging
 from src.logging_utils import log_calls, log_all_methods
+from src.strokesimulation import load_config
 from datetime import datetime
 from pathlib import Path
 from dataclasses import dataclass, field
@@ -367,21 +368,12 @@ class SimulationRunnerWithIntervention(StrokeSimulationWithIntervention):
 
 @log_calls
 def main():
-    simulation_params = {
-        "population_size": 40000,
-        "annual_incidence_rate": 0.05,  # Input annual stroke incidence rate
-        "num_years": 2,
-        "seed": 42,
-        "include_mortality": True,
-        "annual_mortality_rate": 0.01,
-        "age_distribution": True,
-        "initial_age_range": (30, 70),
-        "risk_model": RiskModel(),
-        "intervention_effectiveness": 0.2,  # 20% reduction in stroke risk for intervened patients
-        "num_interventions": 250,
-    }
+    config = load_config("config.yaml")
+    config.setdefault("intervention_effectiveness", 0.2)
+    config.setdefault("num_interventions", 250)
+    config["risk_model"] = RiskModel()
 
-    runner = SimulationRunnerWithIntervention(simulation_params)
+    runner = SimulationRunnerWithIntervention(config)
     runner.run_all()
     runner.summarize_results()
 
