@@ -2,7 +2,11 @@ import numpy as np
 import pandas as pd  # type: ignore
 import matplotlib.pyplot as plt
 import statsmodels.formula.api as smf  # type: ignore
+import logging
+from src.logging_utils import log_calls
 
+
+@log_calls
 
 def generate_population(
     pop_size=40_000,
@@ -69,6 +73,8 @@ def generate_population(
     return df
 
 
+@log_calls
+
 def calibrate_model_score(df, top_k=250, target_ppv=0.12, initial_noise=0.03, max_attempts=10):
     """
     Calibrate the model's predicted score to achieve a target positive predictive value
@@ -117,6 +123,8 @@ def calibrate_model_score(df, top_k=250, target_ppv=0.12, initial_noise=0.03, ma
     print(f"Calibration stopped after {max_attempts} attempts. Final PPV: {current_ppv:.4f}")
 
 
+
+@log_calls
 def simulate_monthly_intervention(df, intervention_efficacy=0.20, top_k=250, months=12):
     """
     12 monthly cycles:
@@ -199,6 +207,8 @@ def simulate_monthly_intervention(df, intervention_efficacy=0.20, top_k=250, mon
     return df, monthly_thresholds
 
 
+
+@log_calls
 def run_rd_analysis(df, thresholds, month=-1, bandwidth=0.02):
     """
     Run regression discontinuity analysis for a specific month's threshold.
@@ -273,6 +283,8 @@ def run_rd_analysis(df, thresholds, month=-1, bandwidth=0.02):
     return sub, model2, results
 
 
+
+@log_calls
 def plot_rd_results(sub_df, rd_results, save_path=None):
     """
     Create visualization of RD analysis results.
@@ -371,6 +383,8 @@ def plot_rd_results(sub_df, rd_results, save_path=None):
     return fig
 
 
+
+@log_calls
 def run_simulation_rd(
     pop_size=100_000,
     baseline_prevalence=0.05,

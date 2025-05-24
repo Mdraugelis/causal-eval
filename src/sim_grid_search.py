@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import beta as beta_dist  # type: ignore
 import logging
+from src.logging_utils import log_calls
 
 # Configure logging.
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -10,6 +11,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 # -----------------------------------------------------------------------------
 # Vectorized simulation run function.
 # -----------------------------------------------------------------------------
+@log_calls
 def simulate_run(
     neg_alpha,
     neg_beta,
@@ -67,6 +69,7 @@ def simulate_run(
 # Grid search function that stops early when either:
 #   (a) The candidate's PPV and Sensitivity are within ±0.02 of target values, or
 #   (b) A maximum number of grid search iterations is reached.
+@log_calls
 # -----------------------------------------------------------------------------
 def grid_search(
     target_ppv,
@@ -171,6 +174,7 @@ def grid_search(
 
 # -----------------------------------------------------------------------------
 # Main function: collects user inputs, runs the grid search with early stopping,
+@log_calls
 # and plots convergence and final Beta distributions.
 # -----------------------------------------------------------------------------
 def main():

@@ -9,6 +9,7 @@ except ModuleNotFoundError:  # pragma: no cover - optional dependency
 import uuid
 from datetime import datetime
 import logging
+from src.logging_utils import log_calls, log_all_methods
 from pathlib import Path
 
 try:
@@ -25,6 +26,7 @@ def load_config(filepath="config.yaml") -> dict:
     return config
 
 
+@log_calls
 def setup_logging(simulation_id: str):
     log_dir = Path("logs")
     log_dir.mkdir(exist_ok=True)
@@ -41,6 +43,7 @@ def setup_logging(simulation_id: str):
 
 
 @dataclass
+@log_all_methods
 class RiskModel:
     """Simulated ML model for stroke risk prediction"""
 
@@ -72,6 +75,7 @@ class RiskModel:
 
 
 @dataclass
+@log_all_methods
 class Person:
     """Class to hold information about each individual in the simulation."""
 
@@ -84,6 +88,7 @@ class Person:
     monthly_risk_scores: List[Optional[float]] = field(default_factory=list)
 
 
+@log_all_methods
 class StrokeSimulation:
     """
     A Python-based simulation of stroke incidence in a population.
@@ -273,6 +278,7 @@ class StrokeSimulation:
             self.population.append(person)
 
 
+@log_all_methods
 class SimulationRunner(StrokeSimulation):
     """Manages running both population and risk prediction simulations along with monthly analysis"""
 
@@ -468,6 +474,7 @@ class SimulationRunner(StrokeSimulation):
         print("...")
 
 
+@log_calls
 def main():
     config = load_config("config.yaml")
     runner = SimulationRunner(config)
