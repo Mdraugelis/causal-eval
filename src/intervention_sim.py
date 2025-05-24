@@ -6,12 +6,14 @@ except ModuleNotFoundError:  # pragma: no cover - optional dependency
     pd = None
 import uuid
 import logging
+from src.logging_utils import log_calls, log_all_methods
 from datetime import datetime
 from pathlib import Path
 from dataclasses import dataclass, field
 from typing import List, Optional
 
 
+@log_calls
 def setup_logging(simulation_id: str):
     log_dir = Path("logs")
     log_dir.mkdir(exist_ok=True)
@@ -86,6 +88,7 @@ class Person:
     intervention_month: Optional[int] = None
 
 
+@log_all_methods
 class StrokeSimulationWithIntervention:
     """
     Simulation of a population over time with a monthly intervention.
@@ -341,6 +344,7 @@ class StrokeSimulationWithIntervention:
             print("...")
 
 
+@log_all_methods
 class SimulationRunnerWithIntervention(StrokeSimulationWithIntervention):
     """Wrapper to manage running the full simulation with intervention and logging."""
 
@@ -361,6 +365,7 @@ class SimulationRunnerWithIntervention(StrokeSimulationWithIntervention):
         self.logger.info("Simulation summary complete.")
 
 
+@log_calls
 def main():
     simulation_params = {
         "population_size": 40000,

@@ -3,10 +3,13 @@ import argparse
 import pickle
 import pandas as pd  # type: ignore
 import numpy as np
+import logging
+from src.logging_utils import log_calls
 import statsmodels.formula.api as smf  # type: ignore
 import matplotlib.pyplot as plt
 
 
+@log_calls
 def load_simulation_results(file_path):
     """Load the simulation results pickle file and return the dataframe."""
     with open(file_path, "rb") as f:
@@ -16,6 +19,7 @@ def load_simulation_results(file_path):
     return df
 
 
+@log_calls
 def prepare_data(df):
     """
     Process the dataframe to extract the month 0 risk score,
@@ -49,6 +53,7 @@ def prepare_data(df):
     df["running"] = df["month0_risk"] - cutoff
     return df, cutoff
 
+@log_calls
 
 def run_rdd_regression(df):
     """
@@ -86,6 +91,7 @@ def plot_rdd(df, cutoff):
     plt.show()
 
 
+@log_calls
 def main():
     parser = argparse.ArgumentParser(description="Run Regression Discontinuity Evaluation on Simulation Output")
     parser.add_argument(
