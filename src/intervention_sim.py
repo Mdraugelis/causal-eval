@@ -136,11 +136,15 @@ class StrokeSimulationWithIntervention:
         self.num_interventions = num_interventions
 
         # Logs and results storage
-        self.stroke_log = []  # List of tuples: (person_id, month_of_stroke)
+        self.stroke_log: List[tuple[int, int]] = []
+        # List of tuples: (person_id, month_of_stroke)
         self.monthly_stroke_counts = [0] * self.total_months
         self.monthly_alive_counts = [0] * self.total_months
         # For each month, record the ranking of the top intervention candidates:
-        self.intervention_log = []  # List of tuples: (month, [ (person_id, risk_score, intervention_flag), ... ])
+        self.intervention_log: List[
+            tuple[int, list[tuple[int, float | None, bool]]]
+        ] = []
+        # List of tuples: (month, [ (person_id, risk_score, intervention_flag), ... ])
 
         self.population: List[Person] = []
         self._initialize_population()
@@ -165,7 +169,10 @@ class StrokeSimulationWithIntervention:
         """Simulate non-stroke deaths for alive individuals."""
         for person in self.population:
             if person.is_alive and not person.has_stroke:
-                if random.random() < self.monthly_mortality_prob:
+                if (
+                    self.monthly_mortality_prob is not None
+                    and random.random() < self.monthly_mortality_prob
+                ):
                     person.is_alive = False
 
     def run_simulation(self):

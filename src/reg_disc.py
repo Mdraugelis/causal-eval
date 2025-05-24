@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import argparse
 import pickle
-import pandas as pd
+import pandas as pd  # type: ignore
 import numpy as np
-import statsmodels.formula.api as smf
+import statsmodels.formula.api as smf  # type: ignore
 import matplotlib.pyplot as plt
 
 

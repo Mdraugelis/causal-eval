@@ -1,7 +1,7 @@
 import numpy as np
-import pandas as pd
+import pandas as pd  # type: ignore
 import matplotlib.pyplot as plt
-import statsmodels.formula.api as smf
+import statsmodels.formula.api as smf  # type: ignore
 
 
 def generate_population(
