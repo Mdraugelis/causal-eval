@@ -184,7 +184,7 @@ class StrokeSimulation:
         """
         if self.age_distribution and month > 0 and (month % 12 == 0):
             for person in self.population:
-                if person.is_alive:
+                if person.is_alive and person.age is not None:
                     person.age += 1
 
     def _apply_mortality(self, month: int) -> None:
@@ -198,7 +198,10 @@ class StrokeSimulation:
         """
         for person in self.population:
             if person.is_alive and not person.has_stroke:
-                if random.random() < self.monthly_mortality_prob:
+                if (
+                    self.monthly_mortality_prob is not None
+                    and random.random() < self.monthly_mortality_prob
+                ):
                     person.is_alive = False
 
     def _apply_stroke(self, month: int) -> None:
@@ -283,7 +286,8 @@ class SimulationRunner(StrokeSimulation):
             self.master_df = None
         else:
             self.master_df = pd.DataFrame()  # To accumulate monthly DataFrames
-        self.monthly_metrics = []  # To store performance metrics for each month
+        self.monthly_metrics: List[dict[str, float | int]] = []
+        # To store performance metrics for each month
 
     def run_all(self) -> dict:
         self.run_simulation()

@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import beta as beta_dist
+from scipy.stats import beta as beta_dist  # type: ignore
 import logging
 
 # Configure logging.
